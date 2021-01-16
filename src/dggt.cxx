@@ -5,33 +5,22 @@ using namespace dggt::mem;
 
 int main(int argc,char* argv[])
 {
-	size_t memSize=50;
+	size_t memSize=70;
 	void* mem=alloc_mem(memSize);
 
-	allocator linAlloc=allocator(LINEAR_ALLOC,mem,memSize);
+	allocator stackAlloc=allocator(STACK_ALLOC,
+		mem,memSize);
 
-	size_t floatCount=10;
-	float* floatArr=linAlloc.alloc<float>(floatCount);
-	for (int i=0;i<floatCount;++i)
-	{
-		floatArr[i]=2*i;
-		float val=floatArr[i];
-		printf("%f\n",val);
-	}
+	
+	printf("%d\n",stackAlloc.get_available());
+	float* floatArr=stackAlloc.alloc<float>(10);
+	printf("%d\n",stackAlloc.get_available());
+	stack_state state=stackAlloc.save_state();
+	int* intAlloc=stackAlloc.alloc<int>(5);
+	printf("%d\n",stackAlloc.get_available());
+	stackAlloc.restore_state(state);
+	printf("%d\n",stackAlloc.get_available());
 
-	size_t uCharCount=10;
-	unsigned char* uCharArr=
-		linAlloc.alloc<unsigned char>(uCharCount);
-	for (int i=0;i<uCharCount;++i)
-	{
-		uCharArr[i]='x';
-		unsigned char val=uCharArr[i];
-		printf("%c\n",val);
-	}
-
-
-	linAlloc.clear();
-
-
+	stackAlloc.clear();
 	return 0;
 }

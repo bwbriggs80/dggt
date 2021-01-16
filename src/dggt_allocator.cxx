@@ -18,6 +18,10 @@ namespace dggt::mem
 	void allocator::clear()
 	{
 		used=0;
+		if (type==STACK_ALLOC)
+		{
+			state=0;
+		}
 	}
 
 	size_t allocator::get_size()
@@ -38,5 +42,24 @@ namespace dggt::mem
 	alloc_t allocator::get_type()
 	{
 		return type;
+	}
+
+	stack_state allocator::save_state()
+	{
+		stack_state result=0;
+		if (type==STACK_ALLOC)
+		{
+			result=used;
+			state=used;
+		}
+		return result;
+	}
+
+	void allocator::restore_state(stack_state state)
+	{
+		if (type==STACK_ALLOC)
+		{
+			used=state;
+		}
 	}
 }
