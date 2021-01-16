@@ -3,7 +3,7 @@
 
 #define PI 3.14f
 
-namespace dggt
+namespace dggt::math
 {
 	float square(float val);
 }

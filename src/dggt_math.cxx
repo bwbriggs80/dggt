@@ -1,6 +1,6 @@
 #include "math.h"
 
-namespace dggt
+namespace dggt::math
 {
 	float square(float val)
 	{
