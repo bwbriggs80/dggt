@@ -16,6 +16,17 @@ namespace dggt::mem
 		return (void*)((unsigned char*)ptr-offset);
 	}
 
+	inline size_t addr_diff(void* lhs,void* rhs)
+	{
+		if (rhs<lhs)
+		{
+			void* temp=rhs;
+			rhs=lhs;
+			lhs=temp;
+		}
+		return (size_t)rhs-(size_t)lhs;
+	}
+
 	void* alloc_mem(size_t size);
 	void free_mem(void* ptr,size_t size);
 

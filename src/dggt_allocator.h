@@ -51,7 +51,18 @@ namespace dggt::mem
 
 		allocator(alloc_t allocType,void* mem,size_t size)
 			: type(allocType),memAddr(mem),
-			memSize(size),used(0),state(0){ }
+			memSize(size),used(0),state(0)
+		{
+			switch (type)
+			{
+				case FREE_BLOCK_ALLOC:
+					{
+						freeHead=(free_block*)mem;
+						freeHead->size=memSize;
+						freeHead->next=0;
+					} break;
+			}
+		}
 
 		allocator(alloc_t allocType,void* mem,size_t size,
 				size_t poolSize)
@@ -82,6 +93,7 @@ namespace dggt::mem
 		bool32 owns(void* ptr,size_t size);
 		stack_state save_state();
 		void restore_state(stack_state state);
+		void clear_buff();
 
 		template <typename T>
 		T* alloc(size_t count=0)
@@ -90,7 +102,7 @@ namespace dggt::mem
 		}
 
 		template <typename T>
-		void free(void* ptr,size_t count=0)
+		void free(T* ptr,size_t count=0)
 		{
 			return free_mem(ptr,sizeof(T)*count);
 		}

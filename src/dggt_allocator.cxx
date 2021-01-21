@@ -59,7 +59,7 @@ namespace
 		while (current)
 		{
 			size_t currentSize=current->size;
-			size_t diff=ABS(currentSize-bestFit);
+			size_t diff=ABS(bestFit-currentSize);
 			if (diff<minDiff)
 			{
 				minDiff=diff;
@@ -72,13 +72,17 @@ namespace
 
 		if (bestFitPtr)
 		{
-			size_t blockDiff=ABS(size-bestFitPtr->size);
+			size_t blockDiff=ABS(bestFitPtr->size-size);
 			if (blockDiff>=sizeof(free_block)) // split
 			{
 				free_block* newBlock=(free_block*)ptr_add(bestFitPtr,size);
 				newBlock->size=blockDiff;
 				newBlock->next=bestFitPtr->next;
-				if (prev)
+				if (bestFitPtr==alloc->freeHead)
+				{
+					alloc->freeHead=newBlock;
+				}
+				else if (prev)
 				{
 					prev->next=newBlock;
 				}
@@ -86,14 +90,17 @@ namespace
 			else // no split
 			{
 				size=bestFitPtr->size;
-				if (prev)
+				if (bestFitPtr==alloc->freeHead)
+				{
+					alloc->freeHead=bestFitPtr->next;
+				}
+				else if (prev)
 				{
 					prev->next=bestFitPtr->next;
 				}
 			}
 			alloc->used+=size;
 			result=bestFitPtr;
-
 		}
 		return result;
 	}
@@ -118,15 +125,28 @@ namespace
 		{
 			size=sizeof(free_block);
 		}
+
+		// adjust size for end of allocator memory considerations.
+		void* allocBeg=alloc->memAddr;
+		void* ptrEnd=ptr_add(ptr,size);
+		size_t totalSize=addr_diff(allocBeg,ptrEnd);
+		size_t endDiff=alloc->memSize-totalSize;
+		if (endDiff<sizeof(free_block))
+		{
+			size+=endDiff;
+		}
+
 		size_t freedSize=size;
 		if (alloc->owns(blockToFree,size))
 		{
-			while (current<blockToFree)
+			while (current&&current<blockToFree)
 			{
 				prev=current;
 				current=current->next;
 			}
 			free_block* newBlock=blockToFree;
+			newBlock->size=size;
+
 			if (prev)
 			{
 				if (ptr_add(prev,prev->size)==newBlock) // merge right
@@ -145,6 +165,15 @@ namespace
 					if (ptr_add(newBlock,size)==current) // merge left
 					{
 						newBlock->size=newBlock->size+current->size;
+						newBlock->next=current->next;
+					}
+					else if (
+							addr_diff(
+								ptr_add(newBlock,size),current)<sizeof(free_block)) // adjust and merge left
+					{
+						size_t diff=addr_diff(
+								ptr_add(newBlock,size),current);
+						newBlock->size=diff+newBlock->size+current->size;
 						newBlock->next=current->next;
 					}
 					else // no merge left
@@ -291,6 +320,30 @@ namespace dggt::mem
 		if (type==STACK_ALLOC)
 		{
 			used=state;
+		}
+	}
+
+	void allocator::clear_buff()
+	{
+		memAddr=0;
+		memSize=0;
+		used=0;
+		switch (type)
+		{
+			case STACK_ALLOC:
+				{
+					state=0;
+
+				} break;
+			case POOL_ALLOC:
+				{
+					pSize=0;
+					poolHead=0;
+				} break;
+			case FREE_BLOCK_ALLOC:
+				{
+					freeHead=0;
+				} break;
 		}
 	}
 }
