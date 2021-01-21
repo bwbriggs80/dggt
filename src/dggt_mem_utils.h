@@ -1,3 +1,5 @@
+/// @file dggt_mem_utils.h
+/// @brief Contains memory utility functions.
 #ifndef _DGGT_MEM_UTILS_H_
 #define _DGGT_MEM_UTILS_H_
 
@@ -6,6 +8,12 @@
 
 namespace dggt::mem
 {
+	/**
+		Adds an offset to a memory address.
+		@param ptr Pointer to memory.
+		@param offset Offset in bytes to add to address.
+		@returns The address offset bytes away from ptr.
+	  */
 	inline void* ptr_add(void* ptr,size_t offset)
 	{
 		return (void*)((unsigned char*)ptr+offset);

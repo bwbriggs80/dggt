@@ -1,0 +1,88 @@
+\hypertarget{structdggt_1_1mem_1_1allocator}{}\doxysection{dggt\+::mem\+::allocator Struct Reference}
+\label{structdggt_1_1mem_1_1allocator}\index{dggt::mem::allocator@{dggt::mem::allocator}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a81c67d5ac01e306335e141b85900564e}\label{structdggt_1_1mem_1_1allocator_a81c67d5ac01e306335e141b85900564e}} 
+{\bfseries allocator} (alloc\+\_\+t alloc\+Type, void $\ast$mem, size\+\_\+t size)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_ae2b54b0affa99de0dd1de9b2cf07334e}\label{structdggt_1_1mem_1_1allocator_ae2b54b0affa99de0dd1de9b2cf07334e}} 
+{\bfseries allocator} (alloc\+\_\+t alloc\+Type, void $\ast$mem, size\+\_\+t size, size\+\_\+t pool\+Size)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a530447ad599a3dea15cbb5e48dabd59b}\label{structdggt_1_1mem_1_1allocator_a530447ad599a3dea15cbb5e48dabd59b}} 
+void $\ast$ {\bfseries alloc\+\_\+mem} (size\+\_\+t size=0)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a646f0aa879f51139e86b0e3ea9c2f19b}\label{structdggt_1_1mem_1_1allocator_a646f0aa879f51139e86b0e3ea9c2f19b}} 
+void {\bfseries free\+\_\+mem} (void $\ast$ptr, size\+\_\+t size=0)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a675983840f31d0af7f4c507418a34914}\label{structdggt_1_1mem_1_1allocator_a675983840f31d0af7f4c507418a34914}} 
+void {\bfseries clear} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_aab2efe954f7b574f79624537052d4c65}\label{structdggt_1_1mem_1_1allocator_aab2efe954f7b574f79624537052d4c65}} 
+size\+\_\+t {\bfseries get\+\_\+size} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_aeeb6e87bb8ff3fce00064af7d0ccd158}\label{structdggt_1_1mem_1_1allocator_aeeb6e87bb8ff3fce00064af7d0ccd158}} 
+size\+\_\+t {\bfseries get\+\_\+used} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a0644d6aac33c03337317d73ebf6b788d}\label{structdggt_1_1mem_1_1allocator_a0644d6aac33c03337317d73ebf6b788d}} 
+size\+\_\+t {\bfseries get\+\_\+available} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_af6bb6c2df77983e6e33bc4247e573d0e}\label{structdggt_1_1mem_1_1allocator_af6bb6c2df77983e6e33bc4247e573d0e}} 
+alloc\+\_\+t {\bfseries get\+\_\+type} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_af0100d965ab8aed3c6db98985242d448}\label{structdggt_1_1mem_1_1allocator_af0100d965ab8aed3c6db98985242d448}} 
+bool32 {\bfseries owns} (void $\ast$ptr, size\+\_\+t size)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a8b4a2e2612b3a2630be2fe98b620ec69}\label{structdggt_1_1mem_1_1allocator_a8b4a2e2612b3a2630be2fe98b620ec69}} 
+stack\+\_\+state {\bfseries save\+\_\+state} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a0f78d8f02dba479d5cdf8df8fd10ca90}\label{structdggt_1_1mem_1_1allocator_a0f78d8f02dba479d5cdf8df8fd10ca90}} 
+void {\bfseries restore\+\_\+state} (stack\+\_\+state state)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a2a0a1b92744e35bed1bbea120d98e651}\label{structdggt_1_1mem_1_1allocator_a2a0a1b92744e35bed1bbea120d98e651}} 
+void {\bfseries clear\+\_\+buff} ()
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_accb3633b73defa40abd67f9028eb6c34}\label{structdggt_1_1mem_1_1allocator_accb3633b73defa40abd67f9028eb6c34}} 
+{\footnotesize template$<$typename T $>$ }\\T $\ast$ {\bfseries alloc} (size\+\_\+t count=0)
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a90d850e8b1821b0a513df23d81b772f1}\label{structdggt_1_1mem_1_1allocator_a90d850e8b1821b0a513df23d81b772f1}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries free} (T $\ast$ptr, size\+\_\+t count=0)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_aca67abd6a7b8c8a018de00cc607aad1f}\label{structdggt_1_1mem_1_1allocator_aca67abd6a7b8c8a018de00cc607aad1f}} 
+alloc\+\_\+t {\bfseries type}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_aa8767cd8bf8f588ed5a57047933f82c1}\label{structdggt_1_1mem_1_1allocator_aa8767cd8bf8f588ed5a57047933f82c1}} 
+void $\ast$ {\bfseries mem\+Addr}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a8d286afa3aeee3c0a263f23c6c05fb02}\label{structdggt_1_1mem_1_1allocator_a8d286afa3aeee3c0a263f23c6c05fb02}} 
+size\+\_\+t {\bfseries mem\+Size}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_a3979b6255bc4350170baa77fd7c1e3fd}\label{structdggt_1_1mem_1_1allocator_a3979b6255bc4350170baa77fd7c1e3fd}} 
+size\+\_\+t {\bfseries used}
+\item 
+\mbox{\Hypertarget{structdggt_1_1mem_1_1allocator_ad30e38912256a2f3ed7f43abf2860c9f}\label{structdggt_1_1mem_1_1allocator_ad30e38912256a2f3ed7f43abf2860c9f}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>stack\_state {\bfseries state}\\
+\mbox{\Hypertarget{uniondggt_1_1mem_1_1allocator_1_1_0d0_af28231cf166c86c970a4065d3e32a025}\label{uniondggt_1_1mem_1_1allocator_1_1_0d0_af28231cf166c86c970a4065d3e32a025}} 
+\>struct \{\\
+\>\>size\_t {\bfseries pSize}\\
+\>\>\mbox{\hyperlink{structdggt_1_1mem_1_1pool__block}{pool\_block}} $\ast$ {\bfseries poolHead}\\
+\>\} \\
+\mbox{\Hypertarget{uniondggt_1_1mem_1_1allocator_1_1_0d0_a5903b5f6cc0def46fd9e7ab7346c2037}\label{uniondggt_1_1mem_1_1allocator_1_1_0d0_a5903b5f6cc0def46fd9e7ab7346c2037}} 
+\>struct \{\\
+\>\>\mbox{\hyperlink{structdggt_1_1mem_1_1free__block}{free\_block}} $\ast$ {\bfseries freeHead}\\
+\>\} \\
+\}; \\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/dggt\+\_\+allocator.\+h\item 
+src/dggt\+\_\+allocator.\+cxx\end{DoxyCompactItemize}

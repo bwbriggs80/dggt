@@ -1,0 +1,56 @@
+\hypertarget{dggt__mem__utils_8h}{}\doxysection{src/dggt\+\_\+mem\+\_\+utils.h File Reference}
+\label{dggt__mem__utils_8h}\index{src/dggt\_mem\_utils.h@{src/dggt\_mem\_utils.h}}
+
+
+Contains memory utility functions.  
+
+
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mman.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \mbox{\hyperlink{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}{dggt\+::mem\+::ptr\+\_\+add}} (void $\ast$ptr, size\+\_\+t offset)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}\label{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}} 
+void $\ast$ {\bfseries dggt\+::mem\+::ptr\+\_\+sub} (void $\ast$ptr, size\+\_\+t offset)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}\label{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}} 
+size\+\_\+t {\bfseries dggt\+::mem\+::addr\+\_\+diff} (void $\ast$lhs, void $\ast$rhs)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}\label{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}} 
+void $\ast$ {\bfseries dggt\+::mem\+::alloc\+\_\+mem} (size\+\_\+t size)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}\label{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}} 
+void {\bfseries dggt\+::mem\+::free\+\_\+mem} (void $\ast$ptr, size\+\_\+t size)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}\label{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}} 
+{\footnotesize template$<$typename T $>$ }\\T $\ast$ {\bfseries dggt\+::mem\+::alloc} (size\+\_\+t count)
+\item 
+\mbox{\Hypertarget{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}\label{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries dggt\+::mem\+::free} (T $\ast$ptr, size\+\_\+t count)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contains memory utility functions. 
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}\label{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!ptr\_add@{ptr\_add}}
+\index{ptr\_add@{ptr\_add}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{ptr\_add()}{ptr\_add()}}
+{\footnotesize\ttfamily void$\ast$ dggt\+::mem\+::ptr\+\_\+add (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Adds an offset to a memory address. 
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to memory. \\
+\hline
+{\em offset} & Offset in bytes to add to address. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The address offset bytes away from ptr. 
+\end{DoxyReturn}
