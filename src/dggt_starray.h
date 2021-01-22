@@ -14,6 +14,30 @@ namespace dggt::coll
 
 		T& operator[](uint32 index) { return data[index]; }
 		const T& operator[](uint32 index) const { return data[index]; }
+
+		struct iter
+		{
+			T* d;
+			uint32 currentIndex;
+
+			iter(T* data,uint32 current);
+			iter();
+
+			bool32 is_end();
+			bool32 is_begin();
+			bool32 next();
+			bool32 prev();
+			T* get_item();
+			const T* get_item() const;
+
+			T& operator*();
+			const T& operator*() const;
+
+			iter& operator++();
+			const iter& operator++(int);
+			iter& operator--();
+			const iter& operator--(int);
+		};
 	};
 
 	template <uint32 S,typename T>
@@ -30,6 +54,12 @@ namespace dggt::coll
 
 	template <uint32 S,typename T>
 	float32 load_factor(starray<S,T>* arr);
+
+	template <uint32 S,typename T>
+	starray<T>::iter begin_iter(starray<S,T>* arr);
+
+	template <uint32 S,typename T>
+	starray<T>::iter end_iter(starray<S,T>* arr);
 }
 
 #include "dggt_starray.inl"
