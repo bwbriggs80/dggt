@@ -165,23 +165,23 @@ namespace dggt::coll
 	}
 
 	template <uint32 S,typename T>
-	starray<T>::iter begin_iter(starray<S,T>* arr)
+	starray<S,T>::iter begin_iter(starray<S,T>* arr)
 	{
-		starray::iter result=starray<T>::iter();
+		starray::iter result=starray<S,T>::iter();
 		if (arr)
 		{
-			result=starray<T>::iter(arr,0);
+			result=starray<S,T>::iter(arr,0);
 		}
 		return result;
 	}
 
 	template <uint32 S,typename T>
-	starray<T>::iter end_iter(starray<S,T>* arr)
+	starray<S,T>::iter end_iter(starray<S,T>* arr)
 	{
-		starray::iter result=starray<T>::iter();
+		starray::iter result=starray<S,T>::iter();
 		if (arr)
 		{
-			result=starray<T>::iter(arr,arr->count-1);
+			result=starray<S,T>::iter(arr,arr->count-1);
 		}
 		return result;
 	}

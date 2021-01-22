@@ -56,10 +56,10 @@ namespace dggt::coll
 	float32 load_factor(starray<S,T>* arr);
 
 	template <uint32 S,typename T>
-	starray<T>::iter begin_iter(starray<S,T>* arr);
+	starray<S,T>::iter begin_iter(starray<S,T>* arr);
 
 	template <uint32 S,typename T>
-	starray<T>::iter end_iter(starray<S,T>* arr);
+	starray<S,T>::iter end_iter(starray<S,T>* arr);
 }
 
 #include "dggt_starray.inl"
