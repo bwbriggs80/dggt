@@ -12,23 +12,17 @@ Contains memory utility functions.
 \item 
 void $\ast$ \mbox{\hyperlink{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}{dggt\+::mem\+::ptr\+\_\+add}} (void $\ast$ptr, size\+\_\+t offset)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}\label{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}} 
-void $\ast$ {\bfseries dggt\+::mem\+::ptr\+\_\+sub} (void $\ast$ptr, size\+\_\+t offset)
+void $\ast$ \mbox{\hyperlink{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}{dggt\+::mem\+::ptr\+\_\+sub}} (void $\ast$ptr, size\+\_\+t offset)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}\label{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}} 
-size\+\_\+t {\bfseries dggt\+::mem\+::addr\+\_\+diff} (void $\ast$lhs, void $\ast$rhs)
+size\+\_\+t \mbox{\hyperlink{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}{dggt\+::mem\+::addr\+\_\+diff}} (void $\ast$lhs, void $\ast$rhs)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}\label{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}} 
 void $\ast$ {\bfseries dggt\+::mem\+::alloc\+\_\+mem} (size\+\_\+t size)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}\label{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}} 
 void {\bfseries dggt\+::mem\+::free\+\_\+mem} (void $\ast$ptr, size\+\_\+t size)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}\label{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}} 
-{\footnotesize template$<$typename T $>$ }\\T $\ast$ {\bfseries dggt\+::mem\+::alloc} (size\+\_\+t count)
+{\footnotesize template$<$typename T $>$ }\\T $\ast$ \mbox{\hyperlink{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}{dggt\+::mem\+::alloc}} (size\+\_\+t count)
 \item 
-\mbox{\Hypertarget{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}\label{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}} 
-{\footnotesize template$<$typename T $>$ }\\void {\bfseries dggt\+::mem\+::free} (T $\ast$ptr, size\+\_\+t count)
+{\footnotesize template$<$typename T $>$ }\\void \mbox{\hyperlink{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}{dggt\+::mem\+::free}} (T $\ast$ptr, size\+\_\+t count)
 \end{DoxyCompactItemize}
 
 
@@ -38,6 +32,88 @@ Contains memory utility functions.
 
 
 \doxysubsection{Function Documentation}
+\mbox{\Hypertarget{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}\label{dggt__mem__utils_8h_a4b46e99cb054263de8c456cf64db041a}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!addr\_diff@{addr\_diff}}
+\index{addr\_diff@{addr\_diff}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{addr\_diff()}{addr\_diff()}}
+{\footnotesize\ttfamily size\+\_\+t dggt\+::mem\+::addr\+\_\+diff (\begin{DoxyParamCaption}\item[{void $\ast$}]{lhs,  }\item[{void $\ast$}]{rhs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Calculates how many bytes between addresses. 
+\begin{DoxyParams}{Parameters}
+{\em lhs} & The left most memory address. \\
+\hline
+{\em rhs} & The right most memory address. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The distance in bytes between addresses. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}\label{dggt__mem__utils_8h_a6f9d585a64750d25f04296462d4e52ea}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!alloc@{alloc}}
+\index{alloc@{alloc}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{alloc()}{alloc()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+T$\ast$ dggt\+::mem\+::alloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{count }\end{DoxyParamCaption})}
+
+Templated version of alloc\+\_\+mem. Allocates memory of desired type. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The desired type of memory. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em count} & The number of T objects that can fit in the memory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the beginning of requested. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}\label{dggt__mem__utils_8cxx_ab05699e0a97875e4d4a13c75a3d82c74}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!alloc\_mem@{alloc\_mem}}
+\index{alloc\_mem@{alloc\_mem}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{alloc\_mem()}{alloc\_mem()}}
+{\footnotesize\ttfamily void $\ast$ dggt\+::mem\+::alloc\+\_\+mem (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Allocates memory. 
+\begin{DoxyParams}{Parameters}
+{\em size} & Size in bytes of desired memory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the beginning of requested memory. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}\label{dggt__mem__utils_8h_a5ddece3da76c32db90dfe51fb89966b1}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!free@{free}}
+\index{free@{free}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{free()}{free()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void dggt\+::mem\+::free (\begin{DoxyParamCaption}\item[{T $\ast$}]{ptr,  }\item[{size\+\_\+t}]{count }\end{DoxyParamCaption})}
+
+Templated version of free\+\_\+mem. Frees memory previously allocated by alloc. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The type of memory being freed. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Address of memory to free. \\
+\hline
+{\em count} & Size of memory in number of objects of type T. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}\label{dggt__mem__utils_8cxx_ac942ee4845a18e0cd4a608a949ccf543}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!free\_mem@{free\_mem}}
+\index{free\_mem@{free\_mem}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{free\_mem()}{free\_mem()}}
+{\footnotesize\ttfamily void dggt\+::mem\+::free\+\_\+mem (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Frees memory previously returned by alloc\+\_\+mem 
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Address of memory to free. \\
+\hline
+{\em size} & Size of the memory to free. \\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}\label{dggt__mem__utils_8h_ac565f4be51dbabcd9c31a9057d5f1ee7}} 
 \index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!ptr\_add@{ptr\_add}}
 \index{ptr\_add@{ptr\_add}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
@@ -52,5 +128,21 @@ Adds an offset to a memory address.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The address offset bytes away from ptr. 
+The address that is offset bytes away from ptr. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}\label{dggt__mem__utils_8h_acf48db3af675413b105dc1e6e0e11ed3}} 
+\index{dggt\_mem\_utils.h@{dggt\_mem\_utils.h}!ptr\_sub@{ptr\_sub}}
+\index{ptr\_sub@{ptr\_sub}!dggt\_mem\_utils.h@{dggt\_mem\_utils.h}}
+\doxysubsubsection{\texorpdfstring{ptr\_sub()}{ptr\_sub()}}
+{\footnotesize\ttfamily void$\ast$ dggt\+::mem\+::ptr\+\_\+sub (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Subtracts an offset to a memory address. 
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to memory. \\
+\hline
+{\em offset} & Offset in bytes to subtract from address. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The address that is offset bytes away from ptr. 
 \end{DoxyReturn}
