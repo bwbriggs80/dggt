@@ -58,10 +58,10 @@ namespace dggt::coll
 	real32 load_factor(darray<T>* arr);
 
 	template <typename T>
-	darray<T>::iter get_begin_iter(darray<T>* arr);
+	darray<T>::iter begin_iter(darray<T>* arr);
 
 	template <typename T>
-	darray<T>::iter get_end_iter(darray<T>* arr);
+	darray<T>::iter end_iter(darray<T>* arr);
 }
 
 #include "dggt_darray.inl"

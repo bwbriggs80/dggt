@@ -205,7 +205,7 @@ namespace dggt::coll
 	}
 
 	template <typename T>
-	darray<T>::iter get_begin_iter(darray<T>* arr)
+	darray<T>::iter begin_iter(darray<T>* arr)
 	{
 		darray<T>::iter result=darray<T>::iter();
 		if (arr)
@@ -216,7 +216,7 @@ namespace dggt::coll
 	}
 
 	template <typename T>
-	darray<T>::iter get_end_iter(darray<T>* arr)
+	darray<T>::iter end_iter(darray<T>* arr)
 	{
 		darray<T>::iter result=darray<T>::iter();
 		if (arr)
