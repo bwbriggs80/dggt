@@ -1,2 +1,4 @@
 dggt
 *.o
+build
+gitsync.sh
