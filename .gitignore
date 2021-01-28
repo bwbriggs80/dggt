@@ -2,3 +2,4 @@ dggt
 *.o
 build
 gitsync.sh
+build.out

@@ -1,31 +1,32 @@
-#include "dggt_allocator.h"
-
 namespace
 {
 	using namespace dggt::mem;
-	using namespace dggt;
-	void* linear_alloc_mem(allocator* alloc,size_t size)
+
+	template <size_t S>
+	void* linear_stalloc_mem(stallocator<S>* alloc,size_t size)
 	{
 		void* result=0;
 		if (size&&alloc->get_available()>=size)
 		{
-			void* memAddr=alloc->memAddr;
+			void* data=(void*)alloc->data;
 			size_t used=alloc->used;
-			if (alloc->memAddr&&alloc->get_available())
+			if ((void*)data&&alloc->get_available())
 			{
-				result=ptr_add(memAddr,used);
+				result=ptr_add((void*)data,used);
 				alloc->used+=size;
 			}
 		}
 		return result;
 	}
 
-	void* stack_alloc_mem(allocator* alloc,size_t size)
+	template <size_t S>
+	void* stack_stalloc_mem(stallocator<S>* alloc,size_t size)
 	{
-		return linear_alloc_mem(alloc,size);
+		return linear_stalloc_mem(alloc,size);
 	}
 
-	void* pool_alloc_mem(allocator* alloc,size_t size)
+	template <size_t S>
+	void* pool_stalloc_mem(stallocator<S>* alloc,size_t size)
 	{
 		void* result=0;
 		if (alloc->get_available()>=alloc->pSize)
@@ -37,7 +38,8 @@ namespace
 		return result;
 	}
 
-	void* free_block_alloc_mem(allocator* alloc,size_t size)
+	template <size_t S>
+	void* free_block_stalloc_mem(stallocator<S>* alloc,size_t size)
 	{
 		free_block* result=0;
 		if (alloc->get_available()<size)
@@ -54,19 +56,17 @@ namespace
 		free_block* current=alloc->freeHead;
 		free_block* prev=0;
 		free_block* bestFitPtr=0;
-		free_block* bestFitPrev=0;
 		size_t bestFit=MAX_SIZE;
 		size_t minDiff=bestFit;
 
 		while (current)
 		{
 			size_t currentSize=current->size;
-			size_t diff=MAX(bestFit,currentSize)-MIN(bestFit,currentSize);
+			size_t diff=ABS(bestFit-currentSize);
 			if (diff<minDiff)
 			{
 				minDiff=diff;
 				bestFit=currentSize;
-				bestFitPrev=prev;
 				bestFitPtr=current;
 			}
 			prev=current;
@@ -75,7 +75,7 @@ namespace
 
 		if (bestFitPtr)
 		{
-			size_t blockDiff=MAX(bestFit,size)-MIN(bestFit,size);
+			size_t blockDiff=ABS(bestFitPtr->size-size);
 			if (blockDiff>=sizeof(free_block)) // split
 			{
 				free_block* newBlock=(free_block*)ptr_add(bestFitPtr,size);
@@ -85,9 +85,9 @@ namespace
 				{
 					alloc->freeHead=newBlock;
 				}
-				else if (bestFitPrev)
+				else if (prev)
 				{
-					bestFitPrev->next=newBlock;
+					prev->next=newBlock;
 				}
 			}
 			else // no split
@@ -97,9 +97,9 @@ namespace
 				{
 					alloc->freeHead=bestFitPtr->next;
 				}
-				else if (bestFitPrev)
+				else if (prev)
 				{
-					bestFitPrev->next=bestFitPtr->next;
+					prev->next=bestFitPtr->next;
 				}
 			}
 			alloc->used+=size;
@@ -108,7 +108,8 @@ namespace
 		return result;
 	}
 
-	void pool_alloc_free_mem(allocator* alloc,void* ptr)
+	template <size_t S>
+	void pool_stalloc_free_mem(stallocator<S>* alloc,void* ptr)
 	{
 		if (alloc->owns(ptr,alloc->pSize))
 		{
@@ -119,12 +120,9 @@ namespace
 		}
 	}
 
-	void free_block_free_mem(allocator* alloc,void* ptr,size_t size)
+	template <size_t S>
+	void free_block_free_mem(stallocator<S>* alloc,void* ptr,size_t size)
 	{
-		if (alloc->type!=POOL_ALLOC)
-		{
-			ASSERT(size)
-		}
 		free_block* current=alloc->freeHead;
 		free_block* prev=0;
 		free_block* blockToFree=(free_block*)ptr;
@@ -133,11 +131,11 @@ namespace
 			size=sizeof(free_block);
 		}
 
-		// adjust size for end of allocator memory considerations.
-		void* allocBeg=alloc->memAddr;
+		// adjust size for end of stallocator<S> memory considerations.
+		void* allocBeg=(void*)alloc->data;
 		void* ptrEnd=ptr_add(ptr,size);
 		size_t totalSize=addr_diff(allocBeg,ptrEnd);
-		size_t endDiff=alloc->memSize-totalSize;
+		size_t endDiff=S-totalSize;
 		if (endDiff<sizeof(free_block))
 		{
 			size+=endDiff;
@@ -213,23 +211,23 @@ namespace
 
 namespace dggt::mem
 {
-	allocator::allocator(alloc_t allocType,void* mem,size_t size)
-		: type(allocType),memAddr(mem),
-		memSize(size),used(0),state(0)
+	template <size_t S>
+	stallocator<S>::stallocator(alloc_t allocType)
+		: type(allocType),used(0),state(0)
 	{
 		switch (type)
 		{
 			case FREE_BLOCK_ALLOC:
 				{
-					freeHead=(free_block*)mem;
-					freeHead->size=memSize;
+					freeHead=(free_block*)data;
 					freeHead->next=0;
 				} break;
 		}
 	}
 
-	allocator::allocator(void* mem,size_t size,size_t poolSize)
-		: allocator(POOL_ALLOC,mem,size)
+	template <size_t S>
+	stallocator<S>::stallocator(size_t poolSize)
+		: stallocator(POOL_ALLOC)
 	{
 		pSize=poolSize;
 		if (pSize>0)
@@ -239,21 +237,15 @@ namespace dggt::mem
 			{
 				pool_block* newBlock=
 					(pool_block*)ptr_add(
-							mem,i*pSize);
+							(void*)data,i*pSize);
 				newBlock->next=poolHead;
 				poolHead=newBlock;
 			}
 		}
 	}
 
-	allocator::allocator(stack_alloc* stackAlloc)
-		: allocator(AUTOSTACK_ALLOC,0,0)
-	{
-		ASSERT(stackAlloc);
-		state=stackAlloc->save_state();
-	}
-
-	void* allocator::alloc_mem(size_t size)
+	template <size_t S>
+	void* stallocator<S>::alloc_mem(size_t size)
 	{
 		void* result=0;
 		switch (type)
@@ -278,7 +270,8 @@ namespace dggt::mem
 		return result;
 	}
 
-	void allocator::free_mem(void* ptr,size_t size)
+	template <size_t S>
+	void stallocator<S>::free_mem(void* ptr,size_t size)
 	{
 		switch (type)
 		{
@@ -293,7 +286,8 @@ namespace dggt::mem
 		}
 	}
 
-	void allocator::clear()
+	template <size_t S>
+	void stallocator<S>::clear()
 	{
 		switch (type)
 		{
@@ -311,12 +305,12 @@ namespace dggt::mem
 					used=0;
 					if (pSize>0)
 					{
-						size_t blockCount=memSize/pSize;
+						size_t blockCount=S/pSize;
 						for (int i=0;i<blockCount;++i)
 						{
 							pool_block* newBlock=
 								(pool_block*)ptr_add(
-										memAddr,i*pSize);
+										(void*)data,i*pSize);
 							newBlock->next=poolHead;
 							poolHead=newBlock;
 						}
@@ -325,33 +319,39 @@ namespace dggt::mem
 		}
 	}
 
-	size_t allocator::get_size()
+	template <size_t S>
+	size_t stallocator<S>::get_size()
 	{
-		return memSize;
+		return S;
 	}
 
-	size_t allocator::get_used()
+	template <size_t S>
+	size_t stallocator<S>::get_used()
 	{
 		return used;
 	}
 
-	size_t allocator::get_available()
+	template <size_t S>
+	size_t stallocator<S>::get_available()
 	{
-		return memSize-used;
+		return S-used;
 	}
 
-	alloc_t allocator::get_type()
+	template <size_t S>
+	alloc_t stallocator<S>::get_type()
 	{
 		return type;
 	}
 
-	bool32 allocator::owns(void* ptr,size_t size)
+	template <size_t S>
+	bool32 stallocator<S>::owns(void* ptr,size_t size)
 	{
-		return ptr>=memAddr&&
-			ptr_add(ptr,size)<=ptr_add(memAddr,memSize);
+		return ptr>=(void*)data&&
+			ptr_add(ptr,size)<=ptr_add((void*)data,S);
 	}
 
-	stack_state allocator::save_state()
+	template <size_t S>
+	stack_state stallocator<S>::save_state()
 	{
 		stack_state result=0;
 		if (type==STACK_ALLOC)
@@ -362,7 +362,8 @@ namespace dggt::mem
 		return result;
 	}
 
-	void allocator::restore_state(stack_state state)
+	template <size_t S>
+	void stallocator<S>::restore_state(stack_state state)
 	{
 		if (type==STACK_ALLOC)
 		{
@@ -370,10 +371,9 @@ namespace dggt::mem
 		}
 	}
 
-	void allocator::clear_buff()
+	template <size_t S>
+	void stallocator<S>::clear_buff()
 	{
-		memAddr=0;
-		memSize=0;
 		used=0;
 		switch (type)
 		{
@@ -391,14 +391,6 @@ namespace dggt::mem
 				{
 					freeHead=0;
 				} break;
-		}
-	}
-
-	allocator::~allocator()
-	{
-		if (type==AUTOSTACK_ALLOC)
-		{
-			stackAlloc->restore_state(state);
 		}
 	}
 }

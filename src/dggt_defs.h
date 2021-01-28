@@ -13,6 +13,12 @@
 #define TRUE 1
 #define FALSE 0
 
+#ifdef DEBUG
+#define ASSERT(P) if (!(P)) { *((int*)0)=1; }
+#elif defined RELEASE
+#define ASSERT(P)
+#endif
+
 /**
 	@namespace dggt
 	@brief Parent namespace of dggt library.

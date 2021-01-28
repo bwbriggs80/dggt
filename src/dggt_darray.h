@@ -4,6 +4,8 @@
 #include "dggt_allocator.h"
 #include "dggt_defs.h"
 
+using namespace dggt::mem;
+
 namespace dggt::coll
 {
 	template <typename T>
@@ -43,25 +45,31 @@ namespace dggt::coll
 	};
 
 	template <typename T>
+	uint32 get_size(darray<T>* arr);
+
+	template <typename T>
+	uint32 get_count(darray<T>* arr);
+
+	template <typename T>
 	darray<T> create_darray(allocator* alloc,uint32 size=2);
 
 	template <typename T>
 	bool32 push(darray<T>* arr,allocator* alloc);
 
 	template <typename T>
-	bool32 push(darray<T>* arr,T* item,allocator* alloc);
+	bool32 push(darray<T>* arr,T item,allocator* alloc);
 
 	template <typename T>
 	void pop(darray<T>* arr,allocator* alloc);
 
 	template <typename T>
-	real32 load_factor(darray<T>* arr);
+	float32 load_factor(darray<T>* arr);
 
 	template <typename T>
-	darray<T>::iter begin_iter(darray<T>* arr);
+	typename darray<T>::iter begin_iter(darray<T>* arr);
 
 	template <typename T>
-	darray<T>::iter end_iter(darray<T>* arr);
+	typename darray<T>::iter end_iter(darray<T>* arr);
 }
 
 #include "dggt_darray.inl"

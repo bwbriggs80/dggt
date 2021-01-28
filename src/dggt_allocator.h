@@ -1,6 +1,6 @@
 // TODO: POOL_ALLOC init function
 #ifndef _DGGT_ALLOCATOR_H_
-#define _DGGT_ALLOCATOR_H
+#define _DGGT_ALLOCATOR_H_
 
 #include "dggt_defs.h" 
 #include "dggt_mem_utils.h"
@@ -8,15 +8,21 @@
 
 namespace dggt::mem
 {
+	struct allocator;
+
 	enum alloc_t
 	{
 		LINEAR_ALLOC,
 		STACK_ALLOC,
 		POOL_ALLOC,
-		FREE_BLOCK_ALLOC
+		FREE_BLOCK_ALLOC,
+		AUTOSTACK_ALLOC
 	};
 
 	typedef size_t stack_state;
+
+	typedef allocator autostack_alloc;
+	typedef allocator stack_alloc;
 
 	struct pool_block
 	{
@@ -47,41 +53,16 @@ namespace dggt::mem
 			{
 				free_block* freeHead;
 			};
+			struct
+			{
+				stack_alloc* stackAlloc;
+			};
 		};
 
-		allocator(alloc_t allocType,void* mem,size_t size)
-			: type(allocType),memAddr(mem),
-			memSize(size),used(0),state(0)
-		{
-			switch (type)
-			{
-				case FREE_BLOCK_ALLOC:
-					{
-						freeHead=(free_block*)mem;
-						freeHead->size=memSize;
-						freeHead->next=0;
-					} break;
-			}
-		}
 
-		allocator(alloc_t allocType,void* mem,size_t size,
-				size_t poolSize)
-			: allocator(allocType,mem,size)
-		{
-			pSize=poolSize;
-			if (pSize>0)
-			{
-				size_t blockCount=size/pSize;
-				for (int i=0;i<blockCount;++i)
-				{
-					pool_block* newBlock=
-						(pool_block*)ptr_add(
-								mem,i*pSize);
-					newBlock->next=poolHead;
-					poolHead=newBlock;
-				}
-			}
-		}
+		allocator(alloc_t allocType,void* mem,size_t size);
+		allocator(void* mem,size_t size,size_t poolSize);
+		allocator(stack_alloc* stackAlloc);
 
 		void* alloc_mem(size_t size=0);
 		void free_mem(void* ptr,size_t size=0);
@@ -106,7 +87,10 @@ namespace dggt::mem
 		{
 			return free_mem(ptr,sizeof(T)*count);
 		}
+
+		~allocator();
 	};
+
 }
 
 #endif

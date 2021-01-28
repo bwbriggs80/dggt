@@ -1,7 +1,35 @@
 #include <cstdio>
 #include "dggt.h"
 
+using namespace dggt;
 using namespace dggt::mem;
+using namespace dggt::coll;
+
+void disp_size_t(const char* label,size_t size);
+void disp_uint32(const char* label,uint32 val);
+void disp_size(const char* label,size_t size);
+void disp_msg(const char* msg);
+void disp_alloc_available(allocator* alloc);
+void disp_alloc_used(allocator* alloc);
+void disp_alloc_size(allocator* alloc);
+void test_pool_alloc(void* mem,size_t memSize);
+void test_stack_alloc(void* mem,size_t memSize);
+void test_free_block_alloc(void* mem,size_t memSize);
+void test_darray_uint32(darray<uint32>* arr,allocator* alloc);
+
+int main(int argc,char* argv[])
+{
+	size_t memSize=KILOBYTES(2);
+	void* mem=alloc_mem(memSize);
+	allocator freeBlockAlloc_=allocator(FREE_BLOCK_ALLOC,
+			mem,memSize);
+	allocator* freeBlockAlloc=&freeBlockAlloc_;
+
+	darray<uint32> uint32Arr=create_darray<uint32>(freeBlockAlloc);
+	test_darray_uint32(&uint32Arr,freeBlockAlloc);
+
+	return 0;
+}
 
 void disp_size(const char* label,size_t size)
 {
@@ -63,7 +91,7 @@ void test_stack_alloc(void* mem,size_t memSize)
 
 void test_pool_alloc(void* mem,size_t memSize)
 {
-	allocator poolAlloc_=allocator(POOL_ALLOC,mem,memSize,sizeof(double));
+	allocator poolAlloc_=allocator(mem,memSize,sizeof(double));
 	allocator* poolAlloc=&poolAlloc_;
 
 	disp_alloc_available(poolAlloc);
@@ -128,11 +156,46 @@ void test_free_block_alloc(void* mem,size_t memSize)
 	freeAlloc->clear_buff();
 }
 
-int main(int argc,char* argv[])
+void disp_uint32(const char* label,uint32 val)
 {
-	size_t memSize=70;
-	void* mem=alloc_mem(memSize);
-	test_free_block_alloc(mem,memSize);
-
-	return 0;
+	printf("%s: ", label);
+	printf("%d\n", val);
 }
+void disp_size_t(const char* label,size_t size)
+{
+	printf("%s: ", label);
+	printf("%d\n", size);
+}
+
+void test_darray_uint32(darray<uint32>* arr,allocator* alloc)
+{
+	uint32 arrSize=10;
+	for (uint32 i=0;i<arrSize;++i)
+	{
+		push(arr,i+1,alloc);
+		disp_uint32("darray size",get_size(arr));
+		disp_uint32("darray count",get_count(arr));
+	}
+
+	uint32 i=0;
+	for (darray<uint32>::iter it=begin_iter(arr);
+			!it.is_end();++it)
+	{
+		printf("array[%d]: %d\n",i,*it);
+		++i;
+	}
+
+	while (get_count(arr))
+	{
+		if (get_count(arr)==2)
+		{
+			bool32 b=0;
+		}
+		pop(arr,alloc);
+		disp_uint32("darray size",get_size(arr));
+		disp_uint32("darray count",get_count(arr));
+	}
+}
+
+
+

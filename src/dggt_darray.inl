@@ -20,10 +20,11 @@ namespace dggt::coll
 	template <typename T>
 	bool32 push(darray<T>* arr,allocator* alloc)
 	{
+		bool32 success=FALSE;
 		if (arr)
 		{
-			bool32 success=TRUE;
-			if (count==size&&alloc)
+			success=TRUE;
+			if (arr->count==arr->size&&alloc)
 			{
 				uint32 oldSize=arr->size;
 				uint32 newSize=2*oldSize;
@@ -36,6 +37,7 @@ namespace dggt::coll
 						newData[i]=oldData[i];
 					}
 					arr->data=newData;
+					arr->size=newSize;
 				}
 				else
 				{
@@ -48,15 +50,16 @@ namespace dggt::coll
 				++arr->count;
 			}
 		}
+		return success;
 	}
 
 	template <typename T>
-	bool32 push(darray<T>* arr,T* item,allocator* alloc)
+	bool32 push(darray<T>* arr,T item,allocator* alloc)
 	{
 		bool32 result=push(arr,alloc);
-		if (item&&result)
+		if (result)
 		{
-			arr->data[arr->count-1]=*item;
+			arr->data[arr->count-1]=item;
 			result=TRUE;
 		}
 		else
@@ -73,7 +76,7 @@ namespace dggt::coll
 		{
 			--arr->count;
 			if (alloc&&
-					alloc->owns(arr->data)&&
+					alloc->owns(arr->data,arr->size)&&
 					load_factor(arr)<0.25f)
 			{
 				uint32 oldSize=arr->size;
@@ -84,8 +87,9 @@ namespace dggt::coll
 				{
 					newData[i]=oldData[i];
 				}
-				alloc->free(oldData);
-				alloc->data=newData;
+				alloc->free(oldData,arr->size);
+				arr->data=newData;
+				arr->size=newSize;
 			}
 		}
 	}
@@ -102,17 +106,17 @@ namespace dggt::coll
 	}
 
 	template <typename T>
-	darray<T>::iter(T* data,uint32 currentIndex,uint32 collSize)
-		:d(data),current(currentSize),size(collSize) { }
+	darray<T>::iter::iter(T* data,uint32 currentIndex,uint32 collSize)
+		:d(data),current(currentIndex),size(collSize) { }
 
 	template <typename T>
-	darray<T>::iter()
+	darray<T>::iter::iter()
 		:iter(0,0,0) { }
 
 	template <typename T>
 	bool32 darray<T>::iter::is_end()
 	{
-		return current>size;
+		return current>=size;
 	}
 
 	template <typename T>
@@ -175,54 +179,68 @@ namespace dggt::coll
 	}
 
 	template <typename T>
-	darray<T>::iter& darray<T>::operator++()
+	typename darray<T>::iter& darray<T>::iter::operator++()
 	{
 		next();
 		return *this;
 	}
 
 	template <typename T>
-	const iter& operator++(int)
+	const typename darray<T>::iter& darray<T>::iter::operator++(int)
 	{
-		darray<T>::iter& result=*this;
+		typename darray<T>::iter& result=*this;
 		next();
 		return result;
 	}
 
 	template <typename T>
-	iter& operator--()
+	typename darray<T>::iter& darray<T>::iter::operator--()
 	{
 		prev();
 		return *this;
 	}
 
 	template <typename T>
-	const iter& operator--(int)
+	const typename darray<T>::iter& darray<T>::iter::operator--(int)
 	{
-		darray<T>::iter& result=*this;
+		typename darray<T>::iter& result=*this;
 		prev();
 		return *this;
 	}
 
 	template <typename T>
-	darray<T>::iter begin_iter(darray<T>* arr)
+	typename darray<T>::iter begin_iter(darray<T>* arr)
 	{
-		darray<T>::iter result=darray<T>::iter();
+		typename darray<T>::iter result=typename darray<T>::iter();
 		if (arr)
 		{
-			result=darray<T>::iter(arr->data,0,arr->size);
+			result=typename darray<T>::iter(arr->data,0,arr->count);
 		}
 		return result;
 	}
 
 	template <typename T>
-	darray<T>::iter end_iter(darray<T>* arr)
+	typename darray<T>::iter end_iter(darray<T>* arr)
 	{
-		darray<T>::iter result=darray<T>::iter();
+		typename darray<T>::iter result=typename darray<T>::iter();
 		if (arr)
 		{
-			result=darray<T>::iter(arr->data,arr->size-1,arr->size);
+			result=typename darray<T>::iter(arr->data,arr->count-1,arr->count);
 		}
 		return result;
 	}
+
+	template <typename T>
+	uint32 get_size(darray<T>* arr)
+	{
+		return arr->size;
+	}
+
+	template <typename T>
+	uint32 get_count(darray<T>* arr)
+	{
+		return arr->count;
+	}
+
+
 }
