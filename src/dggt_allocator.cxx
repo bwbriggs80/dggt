@@ -404,14 +404,4 @@ namespace dggt::mem
 			stkAlloc->restore_state(state);
 		}
 	}
-
-	allocator_<0> create_allocator(alloc_t allocType,void* mem,msize size)
-	{
-		return allocator_<0>(allocType,mem,size);
-	}
-
-	allocator_<0> create_allocator(void* mem,msize size,msize poolSize)
-	{
-		return allocator_<0>(mem,size,poolSize);
-	}
 }

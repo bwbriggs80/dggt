@@ -93,10 +93,6 @@ namespace dggt::mem
 
 		~allocator_();
 	};
-
-	// quick hack for now.
-	allocator_<0> create_allocator(alloc_t allocType,void* mem,msize size);
-	allocator_<0> create_allocator(void* mem,msize size,msize poolSize);
 }
 
 #endif
