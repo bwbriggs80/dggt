@@ -1,3 +1,4 @@
+// TODO: test allocator and stallocator!!
 #include <cstdio>
 #include "dggt.h"
 

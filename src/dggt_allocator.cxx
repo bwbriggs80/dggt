@@ -4,7 +4,8 @@ namespace
 {
 	using namespace dggt::mem;
 	using namespace dggt;
-	void* linear_alloc_mem(allocator* alloc,size_t size)
+
+	void* linear_alloc_mem(allocator_<0>* alloc,size_t size)
 	{
 		void* result=0;
 		if (size&&alloc->get_available()>=size)
@@ -20,12 +21,12 @@ namespace
 		return result;
 	}
 
-	void* stack_alloc_mem(allocator* alloc,size_t size)
+	void* stack_alloc_mem(allocator_<0>* alloc,size_t size)
 	{
 		return linear_alloc_mem(alloc,size);
 	}
 
-	void* pool_alloc_mem(allocator* alloc,size_t size)
+	void* pool_alloc_mem(allocator_<0>* alloc,size_t size)
 	{
 		void* result=0;
 		if (alloc->get_available()>=alloc->pSize)
@@ -37,7 +38,7 @@ namespace
 		return result;
 	}
 
-	void* free_block_alloc_mem(allocator* alloc,size_t size)
+	void* free_block_alloc_mem(allocator_<0>* alloc,size_t size)
 	{
 		free_block* result=0;
 		if (alloc->get_available()<size)
@@ -108,7 +109,7 @@ namespace
 		return result;
 	}
 
-	void pool_alloc_free_mem(allocator* alloc,void* ptr)
+	void pool_alloc_free_mem(allocator_<0>* alloc,void* ptr)
 	{
 		if (alloc->owns(ptr,alloc->pSize))
 		{
@@ -119,7 +120,7 @@ namespace
 		}
 	}
 
-	void free_block_free_mem(allocator* alloc,void* ptr,size_t size)
+	void free_block_free_mem(allocator_<0>* alloc,void* ptr,size_t size)
 	{
 		if (alloc->type!=POOL_ALLOC)
 		{
@@ -213,10 +214,11 @@ namespace
 
 namespace dggt::mem
 {
-	allocator::allocator(alloc_t allocType,void* mem,size_t size)
+	allocator_<0>::allocator_(alloc_t allocType,void* mem,size_t size)
 		: type(allocType),memAddr(mem),
 		memSize(size),used(0),state(0)
 	{
+		ASSERT(allocType!=POOL_ALLOC);
 		switch (type)
 		{
 			case FREE_BLOCK_ALLOC:
@@ -228,8 +230,8 @@ namespace dggt::mem
 		}
 	}
 
-	allocator::allocator(void* mem,size_t size,size_t poolSize)
-		: allocator(POOL_ALLOC,mem,size)
+	allocator_<0>::allocator_(void* mem,size_t size,size_t poolSize)
+		: allocator_(POOL_ALLOC,mem,size)
 	{
 		pSize=poolSize;
 		if (pSize>0)
@@ -246,14 +248,15 @@ namespace dggt::mem
 		}
 	}
 
-	allocator::allocator(stack_alloc* stackAlloc)
-		: allocator(AUTOSTACK_ALLOC,0,0)
+	allocator_<0>::allocator_(stack_alloc* stackAlloc)
+		: allocator_(AUTOSTACK_ALLOC,0,0)
 	{
 		ASSERT(stackAlloc);
-		state=stackAlloc->save_state();
+		stkAlloc=stackAlloc;
+		state=stkAlloc->save_state();
 	}
 
-	void* allocator::alloc_mem(size_t size)
+	void* allocator_<0>::alloc_mem(size_t size)
 	{
 		void* result=0;
 		switch (type)
@@ -278,7 +281,7 @@ namespace dggt::mem
 		return result;
 	}
 
-	void allocator::free_mem(void* ptr,size_t size)
+	void allocator_<0>::free_mem(void* ptr,size_t size)
 	{
 		switch (type)
 		{
@@ -293,7 +296,7 @@ namespace dggt::mem
 		}
 	}
 
-	void allocator::clear()
+	void allocator_<0>::clear()
 	{
 		switch (type)
 		{
@@ -325,33 +328,33 @@ namespace dggt::mem
 		}
 	}
 
-	size_t allocator::get_size()
+	size_t allocator_<0>::get_size()
 	{
 		return memSize;
 	}
 
-	size_t allocator::get_used()
+	size_t allocator_<0>::get_used()
 	{
 		return used;
 	}
 
-	size_t allocator::get_available()
+	size_t allocator_<0>::get_available()
 	{
 		return memSize-used;
 	}
 
-	alloc_t allocator::get_type()
+	alloc_t allocator_<0>::get_type()
 	{
 		return type;
 	}
 
-	bool32 allocator::owns(void* ptr,size_t size)
+	bool32 allocator_<0>::owns(void* ptr,size_t size)
 	{
 		return ptr>=memAddr&&
 			ptr_add(ptr,size)<=ptr_add(memAddr,memSize);
 	}
 
-	stack_state allocator::save_state()
+	stack_state allocator_<0>::save_state()
 	{
 		stack_state result=0;
 		if (type==STACK_ALLOC)
@@ -362,7 +365,7 @@ namespace dggt::mem
 		return result;
 	}
 
-	void allocator::restore_state(stack_state state)
+	void allocator_<0>::restore_state(stack_state state)
 	{
 		if (type==STACK_ALLOC)
 		{
@@ -370,7 +373,7 @@ namespace dggt::mem
 		}
 	}
 
-	void allocator::clear_buff()
+	void allocator_<0>::clear_buff()
 	{
 		memAddr=0;
 		memSize=0;
@@ -394,11 +397,21 @@ namespace dggt::mem
 		}
 	}
 
-	allocator::~allocator()
+	allocator_<0>::~allocator_()
 	{
 		if (type==AUTOSTACK_ALLOC)
 		{
-			stackAlloc->restore_state(state);
+			stkAlloc->restore_state(state);
 		}
+	}
+
+	allocator_<0> create_allocator(alloc_t allocType,void* mem,msize size)
+	{
+		return allocator_<0>(allocType,mem,size);
+	}
+
+	allocator_<0> create_allocator(void* mem,msize size,msize poolSize)
+	{
+		return allocator_<0>(mem,size,poolSize);
 	}
 }

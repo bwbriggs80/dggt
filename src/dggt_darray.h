@@ -1,3 +1,4 @@
+// TODO: templatize methods.
 #ifndef _DGGT_DARRAY_H_
 #define _DGGT_DARRAY_H_
 

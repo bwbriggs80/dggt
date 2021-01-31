@@ -6,19 +6,19 @@
 
 namespace dggt::mem
 {
-	template <size_t S>
-	struct stallocator
+	template <msize Size>
+	struct allocator_
 	{
 		alloc_t type;
-		ubyte data[S];
-		size_t used;
+		ubyte data[Size];
+		msize used;
 
 		union
 		{
 			stack_state state;
 			struct
 			{
-				size_t pSize;
+				msize pSize;
 				pool_block* poolHead;
 			};
 			struct
@@ -28,33 +28,36 @@ namespace dggt::mem
 		};
 
 
-		allocator(alloc_t allocType);
-		allocator(size_t poolSize);
+		allocator_(alloc_t allocType);
+		allocator_(msize poolSize);
 
-		void* alloc_mem(size_t size=0);
-		void free_mem(void* ptr,size_t size=0);
+		void* alloc_mem(msize size=0);
+		void free_mem(void* ptr,msize size=0);
 		void clear();
-		size_t get_size();
-		size_t get_used();
-		size_t get_available();
+		msize get_size();
+		msize get_used();
+		msize get_available();
 		alloc_t get_type();
-		bool32 owns(void* ptr,size_t size);
+		bool32 owns(void* ptr,msize size);
 		stack_state save_state();
 		void restore_state(stack_state state);
 		void clear_buff();
 
 		template <typename T>
-		T* alloc(size_t count=0)
+		T* alloc(msize count=0)
 		{
 			return (T*)alloc_mem(sizeof(T)*count);
 		}
 
 		template <typename T>
-		void free(T* ptr,size_t count=0)
+		void free(T* ptr,msize count=0)
 		{
 			return free_mem(ptr,sizeof(T)*count);
 		}
 	};
+
+	template <msize Size>
+	using stallocator=allocator_<Size>;
 }
 
 #include "dggt_stallocator.inl"

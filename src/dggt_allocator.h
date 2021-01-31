@@ -1,4 +1,4 @@
-// TODO: POOL_ALLOC init function
+// TODO: templatize type enum??
 #ifndef _DGGT_ALLOCATOR_H_
 #define _DGGT_ALLOCATOR_H_
 
@@ -8,7 +8,8 @@
 
 namespace dggt::mem
 {
-	struct allocator;
+	template <msize Size=0>
+	struct allocator_;
 
 	enum alloc_t
 	{
@@ -19,10 +20,11 @@ namespace dggt::mem
 		AUTOSTACK_ALLOC
 	};
 
-	typedef size_t stack_state;
+	typedef msize stack_state;
 
-	typedef allocator autostack_alloc;
-	typedef allocator stack_alloc;
+	typedef allocator_<0> allocator;
+	typedef allocator_<0> autostack_alloc;
+	typedef allocator_<0> stack_alloc;
 
 	struct pool_block
 	{
@@ -31,22 +33,23 @@ namespace dggt::mem
 
 	struct free_block
 	{
-		size_t size;
+		msize size;
 		free_block* next;
 	};
 
-	struct allocator
+	template <>
+	struct allocator_<0>
 	{
 		alloc_t type;
 		void* memAddr;
-		size_t memSize;
-		size_t used;
+		msize memSize;
+		msize used;
 		union
 		{
 			stack_state state;
 			struct
 			{
-				size_t pSize;
+				msize pSize;
 				pool_block* poolHead;
 			};
 			struct
@@ -55,42 +58,45 @@ namespace dggt::mem
 			};
 			struct
 			{
-				stack_alloc* stackAlloc;
+				stack_alloc* stkAlloc;
 			};
 		};
 
 
-		allocator(alloc_t allocType,void* mem,size_t size);
-		allocator(void* mem,size_t size,size_t poolSize);
-		allocator(stack_alloc* stackAlloc);
+		allocator_(alloc_t allocType,void* mem,msize size);
+		allocator_(void* mem,msize size,msize poolSize);
+		allocator_(stack_alloc* stackAlloc);
 
-		void* alloc_mem(size_t size=0);
-		void free_mem(void* ptr,size_t size=0);
+		void* alloc_mem(msize size=0);
+		void free_mem(void* ptr,msize size=0);
 		void clear();
-		size_t get_size();
-		size_t get_used();
-		size_t get_available();
+		msize get_size();
+		msize get_used();
+		msize get_available();
 		alloc_t get_type();
-		bool32 owns(void* ptr,size_t size);
+		bool32 owns(void* ptr,msize size);
 		stack_state save_state();
 		void restore_state(stack_state state);
 		void clear_buff();
 
 		template <typename T>
-		T* alloc(size_t count=0)
+		T* alloc(msize count=0)
 		{
 			return (T*)alloc_mem(sizeof(T)*count);
 		}
 
 		template <typename T>
-		void free(T* ptr,size_t count=0)
+		void free(T* ptr,msize count=0)
 		{
 			return free_mem(ptr,sizeof(T)*count);
 		}
 
-		~allocator();
+		~allocator_();
 	};
 
+	// quick hack for now.
+	allocator_<0> create_allocator(alloc_t allocType,void* mem,msize size);
+	allocator_<0> create_allocator(void* mem,msize size,msize poolSize);
 }
 
 #endif
