@@ -256,6 +256,13 @@ namespace dggt::mem
 		state=stkAlloc->save_state();
 	}
 
+	allocator_<0>::allocator_(autostack_alloc& autostackAlloc)
+		: allocator_(AUTOSTACK_ALLOC,0,0)
+	{
+		stkAlloc=autostackAlloc.stkAlloc;
+		state=stkAlloc->save_state();
+	}
+
 	void* allocator_<0>::alloc_mem(size_t size)
 	{
 		void* result=0;

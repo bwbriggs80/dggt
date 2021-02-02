@@ -9,39 +9,29 @@ namespace dggt::mem
 	template <msize Size>
 	struct allocator_
 	{
-		alloc_t type;
 		ubyte data[Size];
-		msize used;
+		allocator childAlloc;
 
-		union
-		{
-			stack_state state;
-			struct
-			{
-				msize pSize;
-				pool_block* poolHead;
-			};
-			struct
-			{
-				free_block* freeHead;
-			};
-		};
+		allocator_(alloc_t allocType)
+			: childAlloc(allocator_(allocType,(void*)data,Size)) { }
+		allocator_(msize poolSize)
+			: childAlloc(allocator_((void*)data,Size,poolSize)) { }
+		allocator_(stack_alloc* stackAlloc)
+			: childAlloc(allocator_(stackAlloc)) { }
+		allocator_(autostack_alloc& autostackAlloc)
+			: childAlloc(allocator_(autostackAlloc) { }
 
-
-		allocator_(alloc_t allocType);
-		allocator_(msize poolSize);
-
-		void* alloc_mem(msize size=0);
-		void free_mem(void* ptr,msize size=0);
-		void clear();
-		msize get_size();
-		msize get_used();
-		msize get_available();
-		alloc_t get_type();
-		bool32 owns(void* ptr,msize size);
-		stack_state save_state();
-		void restore_state(stack_state state);
-		void clear_buff();
+		void* alloc_mem(msize size=0) { return childAlloc.alloc_mem(size); }
+		void free_mem(void* ptr,msize size=0) { childAlloc.free_mem(ptr,size); }
+		void clear() { childAlloc.clear(); }
+		msize get_size() { return Size; }
+		msize get_used() { return childAlloc.get_used(); }
+		msize get_available() { return childAlloc.get_available(); }
+		alloc_t get_type() { return childAlloc.get_type(); }
+		bool32 owns(void* ptr,msize size) { return childAlloc.owns(ptr,size); }
+		stack_state save_state() { return childAlloc.save_state(); }
+		void restore_state(stack_state state) { childAlloc.restore_state(state); }
+		void clear_buff() { childAlloc.clear_buff(); }
 
 		template <typename T>
 		T* alloc(msize count=0)
@@ -59,7 +49,5 @@ namespace dggt::mem
 	template <msize Size>
 	using stallocator=allocator_<Size>;
 }
-
-#include "dggt_stallocator.inl"
 
 #endif
