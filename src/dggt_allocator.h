@@ -66,7 +66,7 @@ namespace dggt::mem
 		allocator_(alloc_t allocType,void* mem,msize size);
 		allocator_(void* mem,msize size,msize poolSize);
 		allocator_(stack_alloc* stackAlloc);
-		allocator_(autostack_alloc& autostackAlloc);
+		allocator_(const autostack_alloc& autostackAlloc);
 
 		void* alloc_mem(msize size=0);
 		void free_mem(void* ptr,msize size=0);

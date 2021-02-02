@@ -13,13 +13,13 @@ namespace dggt::mem
 		allocator childAlloc;
 
 		allocator_(alloc_t allocType)
-			: childAlloc(allocator_(allocType,(void*)data,Size)) { }
+			: childAlloc(allocator_<0>(allocType,(void*)data,Size)) { }
 		allocator_(msize poolSize)
-			: childAlloc(allocator_((void*)data,Size,poolSize)) { }
+			: childAlloc(allocator_<0>((void*)data,Size,poolSize)) { }
 		allocator_(stack_alloc* stackAlloc)
-			: childAlloc(allocator_(stackAlloc)) { }
-		allocator_(autostack_alloc& autostackAlloc)
-			: childAlloc(allocator_(autostackAlloc) { }
+			: childAlloc(allocator_<0>(stackAlloc)) { }
+		allocator_(const autostack_alloc& autostackAlloc)
+			: childAlloc(allocator_<0>(autostackAlloc)) { }
 
 		void* alloc_mem(msize size=0) { return childAlloc.alloc_mem(size); }
 		void free_mem(void* ptr,msize size=0) { childAlloc.free_mem(ptr,size); }

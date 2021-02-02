@@ -35,7 +35,7 @@ int main(int argc,char* argv[])
 void disp_size(const char* label,size_t size)
 {
 	printf("%s: ",label);
-	printf("%d\n",size);
+	printf("%d\n",(int)size);
 }
 
 void disp_msg(const char* msg)
@@ -76,11 +76,13 @@ void test_stack_alloc(void* mem,size_t memSize)
 	disp_alloc_available(stackAlloc);
 	disp_msg("allocating 10 floats");
 	float* floatArr=stackAlloc->alloc<float>(10);
+	floatArr[0]=4.3f;
 	disp_alloc_available(stackAlloc);
 	disp_msg("saving alloc state");
 	stack_state state=stackAlloc->save_state();
 	disp_msg("allocating 5 ints");
-	int* intAlloc=stackAlloc->alloc<int>(5);
+	int* intArr=stackAlloc->alloc<int>(5);
+	intArr[0]=5;
 	disp_alloc_available(stackAlloc);
 	disp_msg("restoring state");
 	stackAlloc->restore_state(state);
@@ -99,7 +101,7 @@ void test_pool_alloc(void* mem,size_t memSize)
 	disp_msg("allocating a double");
 	double* dbl0=poolAlloc->alloc<double>();
 	disp_alloc_available(poolAlloc);
-	*dbl0=10.0f;
+	*dbl0=10.0;
 	printf("%f\n",*dbl0);
 	double* dbl10=poolAlloc->alloc<double>();
 	disp_msg("allocating a double");
@@ -165,7 +167,7 @@ void disp_uint32(const char* label,uint32 val)
 void disp_size_t(const char* label,size_t size)
 {
 	printf("%s: ", label);
-	printf("%d\n", size);
+	printf("%d\n", (int)size);
 }
 
 void test_darray_uint32(darray<uint32>* arr,allocator* alloc)

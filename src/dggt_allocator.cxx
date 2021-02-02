@@ -219,14 +219,11 @@ namespace dggt::mem
 		memSize(size),used(0),state(0)
 	{
 		ASSERT(allocType!=POOL_ALLOC);
-		switch (type)
+		if (type==FREE_BLOCK_ALLOC)
 		{
-			case FREE_BLOCK_ALLOC:
-				{
-					freeHead=(free_block*)mem;
-					freeHead->size=memSize;
-					freeHead->next=0;
-				} break;
+			freeHead=(free_block*)mem;
+			freeHead->size=memSize;
+			freeHead->next=0;
 		}
 	}
 
@@ -237,7 +234,7 @@ namespace dggt::mem
 		if (pSize>0)
 		{
 			size_t blockCount=size/pSize;
-			for (int i=0;i<blockCount;++i)
+			for (uint32 i=0;i<blockCount;++i)
 			{
 				pool_block* newBlock=
 					(pool_block*)ptr_add(
@@ -256,7 +253,7 @@ namespace dggt::mem
 		state=stkAlloc->save_state();
 	}
 
-	allocator_<0>::allocator_(autostack_alloc& autostackAlloc)
+	allocator_<0>::allocator_(const autostack_alloc& autostackAlloc)
 		: allocator_(AUTOSTACK_ALLOC,0,0)
 	{
 		stkAlloc=autostackAlloc.stkAlloc;
@@ -284,6 +281,10 @@ namespace dggt::mem
 				{
 					result=::free_block_alloc_mem(this,size);
 				} break;
+			case AUTOSTACK_ALLOC:
+				{
+					result=::stack_alloc_mem(stkAlloc,size);
+				} break;
 		}
 		return result;
 	}
@@ -299,6 +300,10 @@ namespace dggt::mem
 			case FREE_BLOCK_ALLOC:
 				{
 					::free_block_free_mem(this,ptr,size);
+				} break;
+			default:
+				{
+					ASSERT(0);
 				} break;
 		}
 	}
@@ -322,7 +327,7 @@ namespace dggt::mem
 					if (pSize>0)
 					{
 						size_t blockCount=memSize/pSize;
-						for (int i=0;i<blockCount;++i)
+						for (uint32 i=0;i<blockCount;++i)
 						{
 							pool_block* newBlock=
 								(pool_block*)ptr_add(
@@ -331,6 +336,18 @@ namespace dggt::mem
 							poolHead=newBlock;
 						}
 					}
+				} break;
+			case FREE_BLOCK_ALLOC:
+				{
+					used=0;
+					state=0;
+					freeHead=(free_block*)memAddr;
+					freeHead->next=0;
+					freeHead->size=memSize;
+				} break;
+			case AUTOSTACK_ALLOC:
+				{
+					stkAlloc->clear();
 				} break;
 		}
 	}
@@ -385,22 +402,22 @@ namespace dggt::mem
 		memAddr=0;
 		memSize=0;
 		used=0;
-		switch (type)
+		if (type==STACK_ALLOC)
 		{
-			case STACK_ALLOC:
-				{
-					state=0;
-
-				} break;
-			case POOL_ALLOC:
-				{
-					pSize=0;
-					poolHead=0;
-				} break;
-			case FREE_BLOCK_ALLOC:
-				{
-					freeHead=0;
-				} break;
+			state=0;
+		}
+		else if (type==AUTOSTACK_ALLOC)
+		{
+			stkAlloc->clear_buff();
+		}
+		else if (type==POOL_ALLOC)
+		{
+			pSize=0;
+			poolHead=0;
+		}
+		else if (type==FREE_BLOCK_ALLOC)
+		{
+			freeHead=0;
 		}
 	}
 
