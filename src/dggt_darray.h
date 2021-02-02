@@ -51,17 +51,17 @@ namespace dggt::coll
 	template <typename T>
 	uint32 get_count(darray<T>* arr);
 
-	template <typename T>
-	darray<T> create_darray(allocator* alloc,uint32 size=2);
+	template <typename T,typename Alloc>
+	darray<T> create_darray(Alloc* alloc,uint32 size=2);
 
-	template <typename T>
-	bool32 push(darray<T>* arr,allocator* alloc);
+	template <typename T,typename Alloc>
+	bool32 push(darray<T>* arr,Alloc* alloc);
 
-	template <typename T>
-	bool32 push(darray<T>* arr,T item,allocator* alloc);
+	template <typename T,typename Alloc>
+	bool32 push(darray<T>* arr,T item,Alloc* alloc);
 
-	template <typename T>
-	void pop(darray<T>* arr,allocator* alloc);
+	template <typename T,typename Alloc>
+	void pop(darray<T>* arr,Alloc* alloc);
 
 	template <typename T>
 	float32 load_factor(darray<T>* arr);

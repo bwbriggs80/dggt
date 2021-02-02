@@ -1,13 +1,13 @@
 
 namespace dggt::coll
 {
-	template <typename T>
-	darray<T> create_darray(allocator* alloc,uint32 size)
+	template <typename T,typename Alloc>
+	darray<T> create_darray(Alloc* alloc,uint32 size)
 	{
 		darray<T> result={};
 		if (alloc&&size)
 		{
-			T* data=alloc->alloc<T>(size);
+			T* data=alloc->template alloc<T>(size);
 			if (data)
 			{
 				result.data=data;
@@ -17,8 +17,8 @@ namespace dggt::coll
 		return result;
 	}
 
-	template <typename T>
-	bool32 push(darray<T>* arr,allocator* alloc)
+	template <typename T,typename Alloc>
+	bool32 push(darray<T>* arr,Alloc* alloc)
 	{
 		bool32 success=FALSE;
 		if (arr)
@@ -29,7 +29,7 @@ namespace dggt::coll
 				uint32 oldSize=arr->size;
 				uint32 newSize=2*oldSize;
 				T* oldData=arr->data;
-				T* newData=alloc->alloc<T>(newSize);
+				T* newData=alloc->template alloc<T>(newSize);
 				if (newData)
 				{
 					for (uint32 i=0;i<oldSize;++i)
@@ -53,8 +53,8 @@ namespace dggt::coll
 		return success;
 	}
 
-	template <typename T>
-	bool32 push(darray<T>* arr,T item,allocator* alloc)
+	template <typename T,typename Alloc>
+	bool32 push(darray<T>* arr,T item,Alloc* alloc)
 	{
 		bool32 result=push(arr,alloc);
 		if (result)
@@ -69,8 +69,8 @@ namespace dggt::coll
 		return result;
 	}
 
-	template <typename T>
-	void pop(darray<T>* arr,allocator* alloc)
+	template <typename T,typename Alloc>
+	void pop(darray<T>* arr,Alloc* alloc)
 	{
 		if (arr&&arr->count)
 		{
@@ -82,7 +82,7 @@ namespace dggt::coll
 				uint32 oldSize=arr->size;
 				uint32 newSize=oldSize/2;
 				T* oldData=arr->data;
-				T* newData=alloc->alloc<T>(newSize);
+				T* newData=alloc->template alloc<T>(newSize);
 				for (uint32 i=0;i<newSize;++i)
 				{
 					newData[i]=oldData[i];
