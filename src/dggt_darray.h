@@ -45,6 +45,9 @@ namespace dggt::coll
 		};
 	};
 
+	template <typename T,typename Alloc>
+	darray<T> create_darray(Alloc* alloc,uint32 size=2);
+
 	template <typename T>
 	uint32 get_size(darray<T>* arr);
 
@@ -52,7 +55,10 @@ namespace dggt::coll
 	uint32 get_count(darray<T>* arr);
 
 	template <typename T,typename Alloc>
-	darray<T> create_darray(Alloc* alloc,uint32 size=2);
+	bool32 reserve(darray<T>* arr,uint32 count,Alloc* alloc);
+
+	template <typename T,typename Alloc>
+	bool32 resize(darray<T>* arr,uint32 newSize,Alloc* alloc);
 
 	template <typename T,typename Alloc>
 	bool32 push(darray<T>* arr,Alloc* alloc);
@@ -60,6 +66,7 @@ namespace dggt::coll
 	template <typename T,typename Alloc>
 	bool32 push(darray<T>* arr,T item,Alloc* alloc);
 
+	//TODO: pop should return bool32 depending on success.
 	template <typename T,typename Alloc>
 	void pop(darray<T>* arr,Alloc* alloc);
 

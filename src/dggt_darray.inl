@@ -18,37 +18,64 @@ namespace dggt::coll
 	}
 
 	template <typename T,typename Alloc>
+	bool32 resize(darray<T>* arr,uint32 newSize,Alloc* alloc)
+	{
+		bool32 result=FALSE;
+		if (arr&&alloc&&alloc->owns(arr->data)&&
+				newSize!=arr->size)
+		{
+			uint32 oldSize=arr->size;
+			T* oldData=arr->data;
+			T* newData=template alloc->alloc<T>(newSize);
+			if (newData)
+			{
+				uint32 maxSize=MAX(oldSize,newSize);
+				for (uint32 i=0;i<maxSize;++i)
+				{
+					newData[i]=oldData[i];
+				}
+				alloc->free(oldData,oldSize);
+				arr->size=newSize;
+				arr->data=newData;
+				result=TRUE;
+			}
+		}
+		return result;
+	}
+
+
+	template <typename T,typename Alloc>
+	bool32 reserve(darray<T>* arr,uint32 count,
+			uint32 buffer,Alloc* alloc)
+	{
+		bool32 result=FALSE;
+		if (arr)
+		{
+			result=TRUE;
+			uint32 newCount=arr->count+count;
+			if (newCount>=arr->size&&alloc)
+			{
+				ASSERT(buffer>newCount);
+				//TODO: figure out number of doublings it would be
+				//TODO: as if we were calling consecutive push calls.
+				result=resize(arr,buffer,alloc);
+			}
+
+			if (result)
+			{
+				arr->count=newCount;
+			}
+		}
+		return result;
+	}
+
+	template <typename T,typename Alloc>
 	bool32 push(darray<T>* arr,Alloc* alloc)
 	{
 		bool32 success=FALSE;
 		if (arr)
 		{
-			success=TRUE;
-			if (arr->count==arr->size&&alloc)
-			{
-				uint32 oldSize=arr->size;
-				uint32 newSize=2*oldSize;
-				T* oldData=arr->data;
-				T* newData=alloc->template alloc<T>(newSize);
-				if (newData)
-				{
-					for (uint32 i=0;i<oldSize;++i)
-					{
-						newData[i]=oldData[i];
-					}
-					arr->data=newData;
-					arr->size=newSize;
-				}
-				else
-				{
-					success=FALSE;
-				}
-			}
-
-			if (success)
-			{
-				++arr->count;
-			}
+			success=reserve(arr,1,2*arr->size,alloc);
 		}
 		return success;
 	}
@@ -79,17 +106,7 @@ namespace dggt::coll
 					alloc->owns(arr->data,arr->size)&&
 					load_factor(arr)<0.25f)
 			{
-				uint32 oldSize=arr->size;
-				uint32 newSize=oldSize/2;
-				T* oldData=arr->data;
-				T* newData=alloc->template alloc<T>(newSize);
-				for (uint32 i=0;i<newSize;++i)
-				{
-					newData[i]=oldData[i];
-				}
-				alloc->free(oldData,arr->size);
-				arr->data=newData;
-				arr->size=newSize;
+				resize(arr,oldSize/2,alloc);
 			}
 		}
 	}
