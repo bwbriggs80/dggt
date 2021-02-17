@@ -37,9 +37,40 @@ namespace dggt::coll
 	}
 
 	template <typename T,typename Alloc>
-	bool32 resize(darray<T>* arr,uint32 newSize,Alloc* alloc)
+	typename darray<T>::iter reserve(darray<T>* arr,uint32 count,
+			uint32 buffer,Alloc* alloc)
 	{
-		bool32 result=FALSE;
+		typename darray<T>::iter result=typename darray<T>::iter();
+		if (arr)
+		{
+			uint32 newCount=arr->count+count;
+			uint32 oldCount=arr->count;
+
+			if (newCount>=arr->size&&alloc)
+			{
+				ASSERT(buffer>newCount);
+				//TODO: figure out number of doublings it would be
+				//TODO: as if we were calling consecutive push calls.
+				result=resize(arr,buffer,alloc);
+			}
+
+			if (result.is_valid())
+			{
+				arr->count=newCount;
+				result.current=oldCount;
+				result.end=newCount-1;
+				result.size=arr->count;
+			}
+		}
+		return result;
+	}
+
+
+	template <typename T,typename Alloc>
+	typename darray<T>::iter resize(
+			darray<T>* arr,uint32 newSize,Alloc* alloc)
+	{
+		typename darray<T>::iter result=typename darray<T>::iter();
 		if (arr&&alloc&&alloc->owns(arr->data)&&
 				newSize!=arr->size)
 		{
@@ -56,7 +87,7 @@ namespace dggt::coll
 				alloc->free(oldData,oldSize);
 				arr->size=newSize;
 				arr->data=newData;
-				result=TRUE;
+				result=typename darray<T>::iter(arr->data,0,arr->count);
 			}
 		}
 		return result;
@@ -64,66 +95,31 @@ namespace dggt::coll
 
 
 	template <typename T,typename Alloc>
-	typename darray<T>::iter reserve(darray<T>* arr,uint32 count,
-			uint32 buffer,Alloc* alloc)
+	typename darray<T>::iter push(darray<T>* arr,Alloc* alloc)
 	{
 		typename darray<T>::iter result=typename darray<T>::iter();
 		if (arr)
 		{
-			bool32 success=TRUE;
-			uint32 newCount=arr->count+count;
-
-			if (newCount>=arr->size&&alloc)
-			{
-				ASSERT(buffer>newCount);
-				//TODO: figure out number of doublings it would be
-				//TODO: as if we were calling consecutive push calls.
-				success=resize(arr,buffer,alloc);
-			}
-
-			if (success)
-			{
-				arr->count=newCount;
-				result.data=arr->data;
-				result.current=arr->count;
-				result.end=newCount;
-			}
+			result=reserve(arr,1,2*arr->size,alloc);
 		}
 		return result;
 	}
 
 	template <typename T,typename Alloc>
-	bool32 push(darray<T>* arr,Alloc* alloc)
+	typename darray<T>::iter push(darray<T>* arr,T item,Alloc* alloc)
 	{
-		bool32 result=FALSE;
-		if (arr)
-		{
-			typename darray<T>::iter reserveIt=
-				reserve(arr,1,2*arr->size,alloc);
-			result=(reserveIt.d!=0);
-		}
-		return result;
-	}
-
-	template <typename T,typename Alloc>
-	bool32 push(darray<T>* arr,T item,Alloc* alloc)
-	{
-		bool32 result=push(arr,alloc);
-		if (result)
+		typename darray<T>::iter result=push(arr,alloc);
+		if (result.is_valid())
 		{
 			arr->data[arr->count-1]=item;
-			result=TRUE;
-		}
-		else
-		{
-			result=FALSE;
 		}
 		return result;
 	}
 
 	template <typename T,typename Alloc>
-	void pop(darray<T>* arr,Alloc* alloc)
+	typename darray<T>::iter pop(darray<T>* arr,Alloc* alloc)
 	{
+		typename darray<T>::iter result=typename darray<T>::iter();
 		if (arr&&arr->count)
 		{
 			--arr->count;
@@ -133,7 +129,10 @@ namespace dggt::coll
 			{
 				resize(arr,oldSize/2,alloc);
 			}
+			result=typename darray<T>::iter(
+					arr->data,arr->count-1,arr->count);
 		}
+		return result;
 	}
 
 	template <typename T>
@@ -154,7 +153,7 @@ namespace dggt::coll
 
 	template <typename T>
 	darray<T>::iter::iter(T* data,uint32 currentIndex,uint32 collSize)
-	:iter(data,currentIndex,collSize,collSize) { }
+	:iter(data,currentIndex,collSize-1,collSize) { }
 
 	template <typename T>
 	darray<T>::iter::iter()
@@ -194,6 +193,12 @@ namespace dggt::coll
 			result=TRUE;
 		}
 		return result;
+	}
+
+	template <typename T>
+	bool32 darray<T>::iter::is_valid()
+	{
+		return d;
 	}
 
 	template <typename T>

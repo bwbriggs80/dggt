@@ -26,6 +26,7 @@ namespace dggt::coll
 			bool32 is_begin();
 			bool32 next();
 			bool32 prev();
+			bool32 is_valid();
 			T* get_item();
 			const T* get_item() const;
 
@@ -64,9 +65,11 @@ namespace dggt::coll
 	template <typename T,typename Alloc>
 	typename darray<T>::iter resize(darray<T>* arr,uint32 newSize,Alloc* alloc);
 
-	//TODO: returns iterator to new head.
 	template <typename T,typename Alloc>
 	typename darray<T>::iter push(darray<T>* arr,Alloc* alloc);
+
+	template <typename T,typename Alloc>
+	typename darray<T>::iter push(darray<T>* arr,T item,Alloc* alloc);
 
 	//TODO: return iterator to newly inserted, uninitialized item.
 	//WARNING: linear time.
@@ -103,10 +106,6 @@ namespace dggt::coll
 	template <typename T,typename Alloc>
 	typename darray<T>::iter insert_before(darray<T>* arr,uint32 nextIndex,
 			T item,Alloc* alloc);
-
-	//TODO: returns iterator to new head.
-	template <typename T,typename Alloc>
-	typename darray<T>::iter push(darray<T>* arr,T item,Alloc* alloc);
 
 	//TODO: pop should return iterator to new head.
 	template <typename T,typename Alloc>
